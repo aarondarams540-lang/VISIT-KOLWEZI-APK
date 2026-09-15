@@ -14,12 +14,11 @@ jobs:
       - name: Télécharger le dépôt
         uses: actions/checkout@v4
 
-      - name: Vérifier le fichier ZIP
+      - name: Vérifier le fichier V3
         run: |
           set -eux
-          echo "Fichiers présents dans le dépôt :"
-          ls -lah
-          test -f VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V2.zip
+          test -f VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V3.zip
+          echo "ZIP V3 trouvé."
 
       - name: Extraire le projet Android
         run: |
@@ -27,14 +26,13 @@ jobs:
           rm -rf extracted android-project
           mkdir -p extracted android-project
 
-          unzip -q VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V2.zip -d extracted
-
-          echo "Contenu extrait :"
-          find extracted -maxdepth 3 -type f | sort
+          unzip -q VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V3.zip -d extracted
 
           test -f extracted/VISIT-KOLWEZI-Android/settings.gradle
 
           cp -a extracted/VISIT-KOLWEZI-Android/. android-project/
+
+          echo "Projet extrait avec succès."
 
       - name: Installer Java 17
         uses: actions/setup-java@v4
@@ -52,19 +50,19 @@ jobs:
           set -eux
           test -d "$ANDROID_HOME/platforms/android-35"
           test -d "$ANDROID_HOME/build-tools/35.0.0"
+          echo "Android SDK 35 trouvé."
 
-      - name: Vérifier le projet Android
+      - name: Vérifier le projet
         working-directory: android-project
         run: |
           set -eux
-
           test -f settings.gradle
           test -f build.gradle
           test -f app/build.gradle
           test -f app/src/main/AndroidManifest.xml
           test -f app/src/main/java/cd/visitkolwezi/app/MainActivity.java
-
-          echo "Projet Android vérifié avec succès."
+          test -f app/src/main/res/values/styles.xml
+          echo "Tous les fichiers nécessaires sont présents."
 
       - name: Compiler l'APK
         working-directory: android-project
@@ -76,8 +74,9 @@ jobs:
         run: |
           set -eux
           test -f android-project/app/build/outputs/apk/debug/app-debug.apk
+          echo "APK créé avec succès."
 
-      - name: Renommer l'APK
+      - name: Préparer l'APK
         run: |
           set -eux
           cp android-project/app/build/outputs/apk/debug/app-debug.apk VISIT-KOLWEZI.apk
