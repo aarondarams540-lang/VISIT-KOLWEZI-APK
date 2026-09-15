@@ -18,8 +18,10 @@ jobs:
         run: |
           rm -rf android-project extracted
           mkdir extracted
-          unzip -q VISIT-KOLWEZI-GITHUB-COMPILATION-PACK.zip -d extracted
-          cp -a extracted/VISIT-KOLWEZI-Android/. android-project/
+          unzip -q VISIT-KOLWEZI-GITHUB-CO
+
+
+      unzip -q VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V2.zip -d extracted
 
       - name: Installer Java 17
         uses: actions/setup-java@v4
