@@ -14,11 +14,11 @@ jobs:
       - name: Télécharger le dépôt
         uses: actions/checkout@v4
 
-      - name: Vérifier le pack V4
+      - name: Vérifier le pack V5
         run: |
           set -eux
-          test -f VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V4.zip
-          echo "Pack V4 trouvé."
+          test -f VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V5.zip
+          echo "Pack V5 trouvé."
 
       - name: Extraire le projet Android
         run: |
@@ -26,7 +26,7 @@ jobs:
           rm -rf extracted android-project
           mkdir -p extracted android-project
 
-          unzip -q VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V4.zip -d extracted
+          unzip -q VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V5.zip -d extracted
 
           test -f extracted/VISIT-KOLWEZI-Android/settings.gradle
 
@@ -59,7 +59,7 @@ jobs:
           test -f app/src/main/AndroidManifest.xml
           test -f app/src/main/java/cd/visitkolwezi/app/MainActivity.java
           test -f app/src/main/res/values/styles.xml
-          test -d app/src/main/assets
+          test -d app/src/main/assets/site
 
       - name: Compiler l'APK
         working-directory: android-project
