@@ -14,13 +14,10 @@ jobs:
       - name: Télécharger le dépôt
         uses: actions/checkout@v4
 
-      - name: Extraire le projet Android
+      - name: Extraire le projet
         run: |
-          set -eux
-          rm -rf extracted android-project
-          mkdir -p extracted android-project
-          unzip -q VISIT-KOLWEZI-GITHUB-COMPILATION-PACK-CORRIGE-FINAL-V2.zip -d extracted
-          test -f extracted/VISIT-KOLWEZI-Android/settings.gradle
+          mkdir -p android-project
+          unzip -q VISIT-KOLWEZI-GITHUB-COMPILATION-PACK.zip -d extracted
           cp -a extracted/VISIT-KOLWEZI-Android/. android-project/
 
       - name: Installer Java 17
@@ -29,39 +26,29 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Installer Gradle 8.9
+      - name: Vérifier Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          test -d "$ANDROID_HOME/platforms/android-35"
+          test -d "$ANDROID_HOME/build-tools/35.0.0"
+          echo "Android SDK 35 OK"
+
+      - name: Installer Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
 
-      - name: Vérifier Android SDK 35
-        run: |
-          set -eux
-          test -d "$ANDROID_HOME/platforms/android-35"
-          test -d "$ANDROID_HOME/build-tools/35.0.0"
-
-      - name: Vérifier les fichiers du projet
+      - name: Compiler VISIT KOLWEZI
         working-directory: android-project
         run: |
-          set -eux
-          test -f settings.gradle
-          test -f build.gradle
-          test -f app/build.gradle
-          test -f app/src/main/AndroidManifest.xml
-          test -f app/src/main/java/cd/visitkolwezi/app/MainActivity.java
+          gradle --no-daemon --stacktrace assembleDebug
 
-      - name: Compiler le fichier APK
-        working-directory: android-project
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
-
-      - name: Préparer l'APK
+      - name: Préparer APK
         run: |
-          set -eux
-          test -f android-project/app/build/outputs/apk/debug/app-debug.apk
           cp android-project/app/build/outputs/apk/debug/app-debug.apk VISIT-KOLWEZI.apk
 
-      - name: Publier l'APK
+      - name: Donner l'APK
         uses: actions/upload-artifact@v4
         with:
-          name: VISIT-KOLWEZI-apk
+          name: VISIT-KOLWEZI
           path: VISIT-KOLWEZI.apk
